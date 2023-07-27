@@ -1,0 +1,21 @@
+WITH accepted AS(
+SELECT 
+*
+FROM fb_friend_requests
+WHERE action = 'accepted'
+
+), sent AS(
+SELECT 
+    *
+FROM fb_friend_requests
+WHERE action = 'sent'
+)
+
+SELECT 
+    s.date,
+    COUNT(a.user_id_receiver)/COUNT(s.user_id_sender) AS percentage_acceptance
+FROM accepted AS a 
+RIGHT JOIN sent AS s 
+ON a.user_id_sender = s.user_id_sender
+AND a.user_id_receiver = s.user_id_receiver
+GROUP BY date
