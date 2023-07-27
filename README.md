@@ -1,4 +1,4 @@
-# SQL-Problem-Solving
+# Crack-the-code-Series
 
 Daily SQL Challenge:
 Every day, I will dive into a challenging SQL problem that is frequently encountered in top companies. 
