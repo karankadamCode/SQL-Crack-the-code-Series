@@ -22,7 +22,7 @@ Table: playbook_users
 
 Expected Output:
 language	n_apple_user	n_total_users
-english	     11	          45
+english	           11	          45
 spanish      	3	           9
 japanese	      2	           6
 french	      0	           5
