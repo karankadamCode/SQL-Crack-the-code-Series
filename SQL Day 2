@@ -1,0 +1,72 @@
+#Problem Description :
+Find the number of Apple product users and the number of total users with a device and group the counts by language. 
+Assume Apple products are only MacBook-Pro, iPhone 5s, and iPad-air. Output the language along with the total number 
+of Apple users and users with any device. Order your results based on the number of total users in descending order.
+
+
+Table: playbook_events
+      user_id:int
+      occurred_at:datetime
+      event_type:varchar
+      event_name:varchar
+      location:varchar
+      device:varchar
+
+Table: playbook_users
+      user_id:int
+      created_at:datetime
+      company_id:int
+      language:varchar
+      activated_at:datetime
+      state:varchar
+
+Expected Output:
+language	n_apple_user	n_total_users
+english	     11	          45
+spanish      	3	           9
+japanese	    2	           6
+french	      0	           5
+russian	      0	           5
+
+
+#Solution Approach :
+        1.	The query retrieves data from two tables, "playbook_events" (aliased as "pe") and "playbook users" (aliased as "pu"), 
+        using an inner join based on the "user_id" column to combine the information.
+        2.	The results are grouped by the "language" column from the "playbook_users" table to analyze user data based on different languages.
+        3.	For each language group, it counts the number of unique users who used specific Apple devices ("macbook pro," "iphone 5s," and "ipad air") 
+        and stores the count as "n_apple_users."
+        4.	Additionally, it calculates the total number of unique users in each language group and stores the count as "n_total_users."
+        5.	The final result is sorted in descending order based on the "n_total_users" count to showcase the languages with the highest number of 
+        total users at the top.
+
+#Solution :
+      SELECT
+          pu.language,
+          COUNT(DISTINCT
+                CASE 
+                  WHEN pe.device IN ('macbook pro','iphone 5s','ipad air')
+                  THEN pe.user_id ELSE NULL
+                END) AS n_apple_users,
+          COUNT(DISTINCT pe.user_id) AS n_total_users
+      FROM playbook_events AS pe 
+      JOIN playbook_users AS pu 
+      ON pe.user_id = pu.user_id
+      GROUP BY pu.language
+      ORDER BY n_total_users DESC
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
