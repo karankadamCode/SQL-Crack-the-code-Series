@@ -1,0 +1,107 @@
+𝐃𝐀𝐘 3: 𝐂𝐫𝐚𝐜𝐤𝐢𝐧𝐠 𝐭𝐡𝐞 𝐜𝐨𝐝𝐞 - 𝐒𝐐𝐋 🚀
+
+📊 𝐏𝐫𝐨𝐛𝐥𝐞𝐦1: Income by Title and Gender
+🌐 𝐀𝐬𝐤𝐞𝐝 𝐢𝐧: City of San Francisco
+💡 𝐃𝐢𝐟𝐟𝐢𝐜𝐮𝐥𝐭𝐲: Medium 🧠
+
+Description:
+Find the average total compensation based on employee titles and gender. Total compensation is calculated by adding 
+both the salary and bonus of each employee. However, not every employee receives a bonus so disregard employees without 
+bonuses in your calculation. Employee can receive more than one bonus.Output the employee title, gender (i.e., sex), along with 
+the average total compensation.
+
+Table sf_employee = 
+id:int
+first_name:varchar
+last_name:varchar
+age:int
+sex:varchar
+employee_title:varchar
+department:varchar
+salary:int
+target:int
+email:varchar
+city:varchar
+address:varchar
+manager_id:int
+
+Table sf_bonus =
+worker_ref_id:int
+bonus:int
+
+Solution Approach:
+•	Start with the sf_employee table and alias it as emp.
+•	Perform an inner join with a subquery that calculates the sum of bonuses for each worker_ref_id in the sf_bonus table. Alias this subquery as bon.
+•	In the subquery, use the GROUP BY clause to group the rows by worker_ref_id and calculate the SUM(bonus) for each group.
+•	Join the main table emp with the subquery bon on the id column of emp and worker_ref_id column of bon.
+•	Now, in the main query, select the columns employee_title, sex, and calculate the average compensation using the expression AVG(emp.salary + bon.bonus). This expression calculates the average of the sum of salary and bonus for each group of employee_title and sex.
+•	Finally, group the results by employee_title and sex using the GROUP BY clause.
+
+Solution:
+SELECT 
+    emp.employee_title,
+    emp.sex,
+    AVG(emp.salary + bon.bonus) avg_compensation
+FROM sf_employee AS emp 
+JOIN 
+-- Taking sum of bonus for same worker_ref_id's 
+    (
+    SELECT 
+        worker_ref_id,
+        SUM(bonus) AS bonus
+    FROM sf_bonus
+    GROUP BY worker_ref_id) AS bon 
+ON emp.id = bon.worker_ref_id
+GROUP BY employee_title,sex
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+📊 𝐏𝐫𝐨𝐛𝐥𝐞𝐦2: Highest Cost Orders
+🌐 𝐀𝐬𝐤𝐞𝐝 𝐢𝐧: Amazon, Shopify
+💡 𝐃𝐢𝐟𝐟𝐢𝐜𝐮𝐥𝐭𝐲: Medium 🧠
+
+Description:
+Find the customer with the highest daily total order cost between 2019-02-01 to 2019-05-01. If customer had more than 
+one order on a certain day, sum the order costs on daily basis. Output customer's first name, total cost of their items, and the date.
+For simplicity, you can assume that every first name in the dataset is unique.
+
+Table customers =
+id:int
+first_name:varchar
+last_name:varchar
+city:varchar
+address:varchar
+phone_number:varchar
+
+Table orders = 
+id:int
+cust_id:int
+order_date:datetime
+order_details:varchar
+total_order_cost:int
+
+Solution Approach:
+•	Start with the customers table and alias it as cust.
+•	Perform a left join with the orders table and alias it as ord. The join is done on cust.id = ord.cust_id, linking the customers table with the orders table.
+•	Apply a filter using the WHERE clause to select only the rows where ord.order_date falls between "2019-02-01" and "2019-05-01".
+•	In the subquery, select cust.first_name and ord.order_date, and calculate the SUM(ord.total_order_cost) for each group of cust.first_name and ord.order_date. The result is then aliased as temp.
+•	In the main query, select first_name, MAX(total_order_cost) (the maximum total order cost for each first_name group), and order_date.
+•	Group the results by first_name and order_date using the GROUP BY clause.
+
+Solution:
+SELECT 
+    first_name,
+    MAX(total_order_cost) AS total_order_cost,
+    order_date
+FROM 
+(SELECT 
+    cust.first_name AS first_name,
+    SUM(ord.total_order_cost) AS total_order_cost,
+    ord.order_date AS order_date
+FROM customers AS cust 
+LEFT JOIN orders AS ord 
+ON cust.id = ord.cust_id
+WHERE ord.order_date BETWEEN "2019-02-01" AND "2019-05-01"
+GROUP  BY cust.first_name,ord.order_date) temp
+
