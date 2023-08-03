@@ -1,0 +1,49 @@
+Problem 1:  Top Businesses with Most Reviews
+Asked in: Yelp
+Difficulty: Medium
+
+Description:
+Find the top 5 businesses with most reviews. Assume that each row has a unique business_id such that the total review 
+for each business is listed on each row. Output the business name along with the total number of reviews and order your 
+results by the total reviews in descending order.
+
+Table yelp_business = 
+business_id:varchar
+name:varchar
+neighborhood:varchar
+address:varchar
+city:varchar
+state:varchar
+postal_code:varchar
+latitude:float
+longitude:float
+stars:float
+review_count:int
+is_open:int
+categories:varchar
+
+
+Solution Approach:
+•	SELECT name, ...: The query selects two columns from the yelp_business table - the name column and the calculated review_count column.
+•	SUM(review_count) OVER(PARTITION BY name) AS review_count: This part of the query is an analytical function. It calculates the sum of the 
+review_count for each business, considering the name as the partitioning criterion. The OVER(PARTITION BY name) clause groups the rows with the 
+same name, and then SUM(review_count) calculates the total review count for each group (business).
+•	FROM yelp_business: This specifies that we are retrieving data from the yelp_business table.
+•	ORDER BY SUM(review_count) OVER(PARTITION BY name) DESC: The results are sorted in descending order based on the calculated review_count. 
+Since the SUM(review_count) is the sum of review counts for each business, sorting in descending order will display the businesses with the 
+highest total review count first.
+•	LIMIT 5: The LIMIT clause restricts the result set to only include the top 5 rows. These will be the five businesses with the highest 
+total review counts.
+
+Solution:
+SELECT 
+    name,
+    SUM(review_count) OVER(PARTITION BY name) AS review_count
+FROM yelp_business
+ORDER BY SUM(review_count) OVER(PARTITION BY name) DESC
+LIMIT 5
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
