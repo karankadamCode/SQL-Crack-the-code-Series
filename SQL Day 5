@@ -46,4 +46,47 @@ LIMIT 5
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
+Problem 2:  Largest Olympics
+Asked in: ESPN
+Difficulty: Medium
 
+Description:
+Find the Olympics with the highest number of athletes. The Olympics game is a combination of the year and the season, and is found in 
+the 'games' column. Output the Olympics along with the corresponding number of athletes.
+
+
+Table olympics_athletes_events =
+id:int
+name:varchar
+sex:varchar
+age:float
+height:float
+weight:datetime
+team:varchar
+noc:varchar
+games:varchar
+year:int
+season:varchar
+city:varchar
+sport:varchar
+event:varchar
+medal:varchar
+
+
+Solution Approach:
+•	SELECT games, ...: The query selects two columns from the olympics_athletes_events table - the games column and the calculated athletes_count column.
+•	COUNT(DISTINCT name) AS athletes_count: This part of the query is an aggregate function. It counts the number of distinct athletes (unique names) for each group of games. The DISTINCT keyword ensures that each athlete is counted only once, even if they participate in multiple events in the same games.
+•	FROM olympics_athletes_events: This specifies that we are retrieving data from the olympics_athletes_events table.
+•	GROUP BY games: The rows in the olympics_athletes_events table are grouped based on the games column. This means that the aggregate function (COUNT) will be calculated for each unique set of games.
+•	ORDER BY COUNT(DISTINCT name) DESC: The results are sorted in descending order based on the calculated athletes_count. This means that the games with the highest number of distinct athletes will be listed first.
+•	LIMIT 1: The LIMIT clause restricts the result set to only include the top 1 row. As a result, the query will return the games with the highest number of distinct athletes.
+
+
+Solution:
+SELECT 
+    games,
+    COUNT(DISTINCT name) AS athletes_count
+FROM olympics_athletes_events
+GROUP BY games
+ORDER BY COUNT(DISTINCT name) DESC
+LIMIT 1
